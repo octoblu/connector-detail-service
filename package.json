@@ -1,0 +1,40 @@
+{
+  "name": "connector-detail-service",
+  "version": "2.1.12",
+  "description": "Connector Detail Service",
+  "main": "server.js",
+  "scripts": {
+    "test": "exit 0",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/octoblu/connector-detail-service.git"
+  },
+  "keywords": [
+    "Gateblu",
+    "Octoblu"
+  ],
+  "author": "Octoblu Inc",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/octoblu/connector-detail-service/issues"
+  },
+  "homepage": "https://github.com/octoblu/connector-detail-service",
+  "dependencies": {
+    "body-parser": "^1.13.3",
+    "coffee-script": "^1.9.3",
+    "cors": "^2.7.1",
+    "debug": "^2.2.0",
+    "errorhandler": "^1.4.2",
+    "express": "^4.13.3",
+    "express-meshblu-healthcheck": "^1.0.1",
+    "lodash": "^3.10.1",
+    "md5": "^2.0.0",
+    "meshblu-config": "^3.1.0",
+    "meshblu-http": "^3.4.1",
+    "morgan": "^1.6.1",
+    "node-uuid": "^1.4.3",
+    "request": "^2.62.0"
+  }
+}
