@@ -7,10 +7,10 @@ healthcheck         = require 'express-meshblu-healthcheck'
 ConnectorController = require './src/connector-controller'
 
 app = express()
+app.use healthcheck()
 app.use bodyParser.json()
 app.use cors()
 app.use errorhandler()
-app.use healthcheck()
 app.use morgan 'dev'
 
 connectorController = new ConnectorController
@@ -23,3 +23,7 @@ server = app.listen (process.env.PORT || 80), ->
   port = server.address().port
 
   console.log "Connector Detail Service started http://#{host}:#{port}"
+
+process.on 'SIGTERM', =>
+  console.log 'SIGTERM caught, exiting'
+  process.exit 0
