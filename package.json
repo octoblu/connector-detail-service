@@ -1,6 +1,6 @@
 {
   "name": "connector-detail-service",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Connector Detail Service",
   "main": "server.js",
   "scripts": {
