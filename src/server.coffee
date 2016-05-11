@@ -16,10 +16,10 @@ class Server
 
   run: (callback) =>
     app = express()
-    app.use morgan 'dev', immediate: false unless @disableLogging
     app.use cors()
     app.use errorHandler()
     app.use meshbluHealthcheck()
+    app.use morgan 'dev', immediate: false unless @disableLogging
     app.use bodyParser.urlencoded limit: '1mb', extended : true
     app.use bodyParser.json limit : '1mb'
 
