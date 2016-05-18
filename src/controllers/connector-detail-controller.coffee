@@ -9,7 +9,7 @@ class ConnectorDetailController
 
   getPlatformDependencies: (request, response) =>
     { connectorName } = request.params
-    @npmRegistryModel.getDependenciesForPackage connectorName, (error, registryResponse) =>
+    @connectorDetailService.getDependenciesForPackage connectorName, (error, registryResponse) =>
       return response.status(error.code).send({ error: error.message }) if error?
       response.status(200).send registryResponse
 

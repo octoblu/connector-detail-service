@@ -1,3 +1,4 @@
+_         = require 'lodash'
 NPMClient = require 'npm-registry-client'
 debug     = require('debug')('connector-detail-service:service')
 
@@ -15,8 +16,8 @@ class ConnectorDetailService
   getDependenciesForPackage: (packageName, callback=->) =>
     @getPackage packageName, (error, body) =>
       return callback error if error?
-      latestVersion = body["dist-tags"]?.latest
-      platformDependencies = body.versions[latestVersion].platformDependencies if latestVersion
+      latestVersion = body?["dist-tags"]?.latest
+      platformDependencies = _.get(body, "versions['#{latestVersion}'].platformDependencies")
       callback null, platformDependencies
 
   getPackage: (packageName, callback) =>
