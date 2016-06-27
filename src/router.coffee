@@ -1,11 +1,12 @@
 ConnectorDetailController = require './controllers/connector-detail-controller'
 
 class Router
-  constructor: ({@connectorDetailService}) ->
+  constructor: ({ @npmDetailService, @githubDetailService }) ->
   route: (app) =>
-    connectorDetailController = new ConnectorDetailController {@connectorDetailService}
+    connectorDetailController = new ConnectorDetailController { @npmDetailService, @githubDetailService }
 
-    app.get '/:connectorName', connectorDetailController.getPackage
+    app.get '/github/:owner/:repo', connectorDetailController.getGithubDetails
+    app.get '/:connectorName', connectorDetailController.getNPMDetails
     app.get '/:connectorName/dependencies', connectorDetailController.getPlatformDependencies
 
 module.exports = Router

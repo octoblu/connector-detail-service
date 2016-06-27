@@ -1,15 +1,18 @@
-cors               = require 'cors'
-morgan             = require 'morgan'
-express            = require 'express'
-bodyParser         = require 'body-parser'
-errorHandler       = require 'errorhandler'
-meshbluHealthcheck = require 'express-meshblu-healthcheck'
-debug              = require('debug')('connector-detail-service:server')
-Router             = require './router'
-ConnectorDetailService = require './services/connector-detail-service'
+cors                = require 'cors'
+morgan              = require 'morgan'
+express             = require 'express'
+bodyParser          = require 'body-parser'
+errorHandler        = require 'errorhandler'
+meshbluHealthcheck  = require 'express-meshblu-healthcheck'
+NPMDetailService    = require './services/npm-detail-service'
+GithubDetailService = require './services/github-detail-service'
+Router              = require './router'
+debug               = require('debug')('connector-detail-service:server')
 
 class Server
-  constructor: ({@disableLogging, @port, @npmUsername, @npmPassword, @npmEmail })->
+  constructor: (options)->
+    {@disableLogging, @port} = options
+    {@npmUsername, @npmPassword, @npmEmail } = options
 
   address: =>
     @server.address()
@@ -25,8 +28,9 @@ class Server
 
     app.options '*', cors()
 
-    connectorDetailService = new ConnectorDetailService {@npmUsername, @npmPassword, @npmEmail}
-    router = new Router {connectorDetailService}
+    npmDetailService = new NPMDetailService {@npmUsername, @npmPassword, @npmEmail}
+    githubDetailService = new GithubDetailService
+    router = new Router { npmDetailService, githubDetailService }
 
     router.route app
 

@@ -1,15 +1,21 @@
 class ConnectorDetailController
-  constructor: ({ @connectorDetailService }) ->
+  constructor: ({ @npmDetailService, @githubDetailService }) ->
 
-  getPackage: (request, response) =>
+  getGithubDetails: (request, response) =>
+    { owner, repo } = request.params
+    @githubDetailService.getDetails { owner, repo }, (error, versions) =>
+      return response.status(error.code).send({ error: error.message }) if error?
+      response.status(200).send versions
+
+  getNPMDetails: (request, response) =>
     { connectorName } = request.params
-    @connectorDetailService.getPackage connectorName, (error, registryResponse) =>
+    @npmDetailService.getDetails connectorName, (error, registryResponse) =>
       return response.status(error.code).send({ error: error.message }) if error?
       response.status(200).send registryResponse
 
   getPlatformDependencies: (request, response) =>
     { connectorName } = request.params
-    @connectorDetailService.getDependenciesForPackage connectorName, (error, registryResponse) =>
+    @npmDetailService.getDependenciesForPackage connectorName, (error, registryResponse) =>
       return response.status(error.code).send({ error: error.message }) if error?
       response.status(200).send registryResponse
 
