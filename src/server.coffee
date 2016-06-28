@@ -12,7 +12,8 @@ debug               = require('debug')('connector-detail-service:server')
 class Server
   constructor: (options)->
     {@disableLogging, @port} = options
-    {@npmUsername, @npmPassword, @npmEmail } = options
+    {@npmUsername, @npmPassword, @npmEmail} = options
+    {@githubToken} = options
 
   address: =>
     @server.address()
@@ -29,7 +30,7 @@ class Server
     app.options '*', cors()
 
     npmDetailService = new NPMDetailService {@npmUsername, @npmPassword, @npmEmail}
-    githubDetailService = new GithubDetailService
+    githubDetailService = new GithubDetailService {@githubToken}
     router = new Router { npmDetailService, githubDetailService }
 
     router.route app

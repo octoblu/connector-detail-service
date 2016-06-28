@@ -9,12 +9,14 @@ class Command
       npmUsername:    process.env.NPM_USERNAME
       npmPassword:    process.env.NPM_PASSWORD
       npmEmail:       process.env.NPM_EMAIL
+      githubToken:    process.env.GITHUB_TOKEN
 
   panic: (error) =>
     console.error error.stack
     process.exit 1
 
   run: =>
+    @panic new Error('Missing required environment variable: GITHUB_TOKEN') if _.isEmpty @serverOptions.githubToken
     @panic new Error('Missing required environment variable: NPM_USERNAME') if _.isEmpty @serverOptions.npmUsername
     @panic new Error('Missing required environment variable: NPM_PASSWORD') if _.isEmpty @serverOptions.npmPassword
     @panic new Error('Missing required environment variable: NPM_EMAIL') if _.isEmpty @serverOptions.npmEmail
