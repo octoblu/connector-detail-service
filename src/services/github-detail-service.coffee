@@ -23,6 +23,7 @@ class GithubDetailService
       }
       _.each bodyResponse, ({ tag_name, created_at, published_at, assets, prerelease, draft }) =>
         details.tags[tag_name] ?= {
+          tag: tag_name,
           created_at,
           published_at,
           prerelease,
@@ -34,6 +35,7 @@ class GithubDetailService
             name,
           }
 
+      details.latest = _.first _.values details.tags
       callback null, details
 
   _createError: (code, message) =>
