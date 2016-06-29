@@ -55,7 +55,8 @@ class GithubDetailService
   getCache: (slug) =>
     return unless @cache[slug]?
     secondsAgo = moment().subtract 30, 'seconds'
-    return @cache[slug] if moment(@cache[slug].updatedAt).isBefore secondsAgo
+    return unless moment(@cache[slug].updatedAt).isBefore secondsAgo
+    return @cache[slug].details 
 
   _createError: (code, message) =>
     error = new Error message
