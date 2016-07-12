@@ -20,7 +20,7 @@ class NPMDetailService
       platformDependencies = _.get(body, "versions['#{latestVersion}'].platformDependencies")
       callback null, platformDependencies
 
-  getDetails: (packageName, callback) =>
+  getPackage: (packageName, callback) =>
     uri = "#{@NPM_REGISTRY_API_URL}/#{packageName}"
     @npmClient.get uri, {}, (error, response) =>
       return callback @_createError error.code, error.message if error?

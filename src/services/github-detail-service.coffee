@@ -7,7 +7,6 @@ class GithubDetailService
 
   getDetails: ({ owner, repo }, callback) =>
     slug = "#{owner}/#{repo}"
-
     @getReleases { slug }, (userError, rawReleases) =>
       return callback userError if userError?
       @getLatestRelease { slug }, (userError, rawLatest) =>

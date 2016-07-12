@@ -9,7 +9,7 @@ class ConnectorDetailController
 
   getNPMDetails: (request, response) =>
     { connectorName } = request.params
-    @npmDetailService.getDetails connectorName, (error, registryResponse) =>
+    @npmDetailService.getPackage connectorName, (error, registryResponse) =>
       return response.status(error.code).send({ error: error.message }) if error?
       response.status(200).send registryResponse
 
