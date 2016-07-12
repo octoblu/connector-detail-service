@@ -1,17 +1,42 @@
 _       = require 'lodash'
 request = require 'request'
-moment  = require 'moment'
 debug   = require('debug')('connector-detail-service:github-detail-service')
 
 class GithubDetailService
   constructor: ({ @githubToken }) ->
-    @cache = {}
 
   getDetails: ({ owner, repo }, callback) =>
     slug = "#{owner}/#{repo}"
-    cache = @getCache slug
-    return callback null, cache if cache?
 
+    @getReleases { slug }, (userError, rawReleases) =>
+      return callback userError if userError?
+      @getLatestRelease { slug }, (userError, rawLatest) =>
+        return callback userError if userError?
+        latest = @getTagInfo rawLatest
+        tags = @getTagsFromReleases rawReleases
+        callback null, {
+          owner,
+          repo,
+          latest,
+          tags,
+        }
+
+  getTagsFromReleases: (releases) =>
+    tagValues = _.map releases, @getTagInfo
+    tagKeys = _.map tagValues, 'tag'
+    return _.zipObject tagKeys, tagValues
+
+  getTagInfo: ({ tag_name, created_at, published_at, assets, prerelease, draft }) =>
+    return {
+      tag: tag_name,
+      created_at,
+      published_at,
+      prerelease,
+      draft,
+      assets: _.map(assets, 'name')
+    }
+
+  getReleases: ({ slug }, callback) =>
     options =
       baseUrl: 'https://api.github.com/'
       uri: "/repos/#{slug}/releases"
@@ -23,40 +48,21 @@ class GithubDetailService
     request.get options, (error, response, bodyResponse={}) =>
       return callback @_createError 500, error.message if error?
       return callback @_createError response.statusCode, bodyResponse.message if response.statusCode > 299
-      details = {
-        owner,
-        repo,
-        latest: {}
-        tags: {}
-      }
-      _.each bodyResponse, ({ tag_name, created_at, published_at, assets, prerelease, draft }) =>
-        details.tags[tag_name] ?= {
-          tag: tag_name,
-          created_at,
-          published_at,
-          prerelease,
-          draft,
-          assets: []
-        }
-        _.each assets, ({ name }) =>
-          details.tags[tag_name].assets.push {
-            name,
-          }
+      return callback null, bodyResponse
 
-      details.latest = _.first _.values details.tags
-      @setCache slug, details
-      callback null, details
+  getLatestRelease: ({ slug }, callback) =>
+    options =
+      baseUrl: 'https://api.github.com/'
+      uri: "/repos/#{slug}/releases/latest"
+      headers:
+        'User-Agent': 'Octoblu Connector Detail Service'
+        'Authorization': "token #{@githubToken}"
+      json: true
 
-  setCache: (slug, details) =>
-    @cache[slug] ?= {}
-    @cache[slug].details = details
-    @cache[slug].updatedAt = Date.now()
-
-  getCache: (slug) =>
-    return unless @cache[slug]?
-    secondsAgo = moment().subtract 30, 'seconds'
-    return unless moment(@cache[slug].updatedAt).isBefore secondsAgo
-    return @cache[slug].details 
+    request.get options, (error, response, bodyResponse={}) =>
+      return callback @_createError 500, error.message if error?
+      return callback @_createError response.statusCode, bodyResponse.message if response.statusCode > 299
+      return callback null, bodyResponse
 
   _createError: (code, message) =>
     error = new Error message
