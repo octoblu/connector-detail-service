@@ -26,14 +26,20 @@ class GithubDetailService
     return _.zipObject tagKeys, tagValues
 
   getTagInfo: ({ tag_name, created_at, published_at, assets, prerelease, draft }) =>
+    assets = @getAssets assets
+    tag = tag_name
     return {
-      tag: tag_name,
+      tag,
       created_at,
       published_at,
       prerelease,
       draft,
-      assets: _.map(assets, 'name')
+      assets,
     }
+
+  getAssets: (assets) =>
+    return _.map assets, ({ name }) =>
+      return { name }
 
   getReleases: ({ slug }, callback) =>
     options =
