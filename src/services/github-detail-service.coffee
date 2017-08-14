@@ -13,6 +13,7 @@ class GithubDetailService
         return callback userError if userError?
         latest = @getTagInfo rawLatest
         tags = @getTagsFromReleases rawReleases
+        tags[latest.tag] = latest
         callback null, {
           owner,
           repo,
@@ -44,7 +45,7 @@ class GithubDetailService
   getReleases: ({ slug }, callback) =>
     options =
       baseUrl: 'https://api.github.com/'
-      uri: "/repos/#{slug}/releases"
+      uri: "/repos/#{slug}/releases?per_page=100"
       headers:
         'User-Agent': 'Octoblu Connector Detail Service'
         'Authorization': "token #{@githubToken}"
